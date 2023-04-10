@@ -52,13 +52,10 @@ void print_reverse_generic(void * p_data, var_type_t data_type, int num_of_data)
         {
             int number = ((int*)p_data)[i];
             int remainder;
-            // int reverse = 0;
             printf("(");
             while (number != 0) 
             {   
-                //todo: when the value is 1000 it is printing 1 instead of 0001
                 remainder = number % 10;
-                // reverse = reverse * 10 + remainder;
                 number /= 10;
                 printf("%d", remainder);
             }

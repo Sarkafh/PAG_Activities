@@ -54,11 +54,7 @@ int main(int argc, char **argv)
     int num_of_data = 0;
 
     p_stored_data = malloc(MAX_FULL_DATA_SIZE_BYTES);
-    // p_new_value = malloc(MAX_SINGLE_VALUE_SIZE_BYTES);
 
-    // printf("p_stored_data: %p; p_new_value: %p\n", p_stored_data, p_new_value);
-
-    // if(!fscanf(stdin, "%s %s", input_text, input_type))
     if(fgets(line, MAXIMUM_SIZE_OF_LINE, stdin) == NULL)
     {
         printf("Invalid Input File.");
@@ -66,19 +62,13 @@ int main(int argc, char **argv)
     }
 
     input_type = strtok(line, DELIMITER_CHARACTER);
-    // input_type = strtok(NULL, DELIMITER_CHARACTER);
-    
-    // printf("type_text %s\n", input_type);
-
     
     data_type = get_data_type(input_type);
     data_type_size = get_type_size(data_type);
 
-    // printf("input_text: %s\n", line);
     if(data_type_size == -1)
     {
-        printf("input_text: %s\n", line);
-        // printf("Invalid Data Type Error!\n");
+        printf("Invalid Data Type Error!\n");
         return FINISHED_ERROR;
     }
 
@@ -97,7 +87,6 @@ int main(int argc, char **argv)
         while ((p_new_value != NULL) && (strcmp(p_new_value, "\n") != 0))
         {
             num_of_data ++;
-            // printf("new: %c\n", ((char*)p_new_value)[0]);
 
             if(data_type == INT_TYPE)
             {
@@ -110,7 +99,6 @@ int main(int argc, char **argv)
                 temp_pointer = (void *) &temp_char;
             }
 
-            // printf("before -> temp_char: %c; temp_pointer: %p \n", ((char *)(temp_pointer))[0], temp_pointer);
             p_stored_data = store_data(p_stored_data, temp_pointer, data_type_size);
 
             p_new_value = strtok(NULL, DELIMITER_CHARACTER); // In this case we put NULL so it continues in the same line and on the next delimiter
@@ -118,8 +106,6 @@ int main(int argc, char **argv)
     }
 
     p_stored_data = p_stored_data - num_of_data*data_type_size; // Restore pointer to its initial value
-
-    // printf("input -> p_stored_data: %p\n", p_stored_data);
 
     print_reverse_generic(p_stored_data, data_type, num_of_data);
 
