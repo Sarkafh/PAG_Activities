@@ -24,7 +24,6 @@
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
-void * store_data(void * p_memory, void * p_data, int data_size);
 
 /******************************************************************************
 * Function Definitions
@@ -46,14 +45,8 @@ int main(int argc, char **argv)
     char line[MAXIMUM_SIZE_OF_LINE];
 
     char * p_new_value;
-    void * p_stored_data;
 
-    var_type_t data_type;
-    int data_type_size;
-    
     int num_of_data = 0;
-
-    p_stored_data = malloc(MAX_FULL_DATA_SIZE_BYTES);
 
     if(fgets(line, MAXIMUM_SIZE_OF_LINE, stdin) == NULL)
     {
@@ -61,12 +54,9 @@ int main(int argc, char **argv)
         return FINISHED_ERROR;
     }
 
-    input_type = strtok(line, DELIMITER_CHARACTER);
-    
-    data_type = get_data_type(input_type);
-    data_type_size = get_type_size(data_type);
+    input_type = strtok(line, DELIMITER_CHARACTER); // Get first information until delimiter: Ex: Tipo:int
 
-    if(data_type_size == -1)
+    if(init_gen_data_storage(get_data_type(input_type)) == RGEN_ERROR)
     {
         printf("Invalid Data Type Error!\n");
         return FINISHED_ERROR;
@@ -99,27 +89,32 @@ int main(int argc, char **argv)
                 temp_pointer = (void *) &temp_char;
             }
 
-            p_stored_data = store_data(p_stored_data, temp_pointer, data_type_size);
+            insert_gen_data(temp_pointer);
 
             p_new_value = strtok(NULL, DELIMITER_CHARACTER); // In this case we put NULL so it continues in the same line and on the next delimiter
         }
     }
 
-    p_stored_data = p_stored_data - num_of_data*data_type_size; // Restore pointer to its initial value
+    print_data_type();
+    print_reverse_generic();
 
-    print_reverse_generic(p_stored_data, data_type, num_of_data);
-
-    free(p_stored_data);
+    deinit_data_storage();
 
     return FINISHED_SUCCESS;
 }
 
-void * store_data(void * p_memory, void * p_data, int data_size)
+var_type_t get_data_type(char var_type_text[])
 {
-    for(int i = 0; i < data_size; i++)
+    if(strcmp(var_type_text, "Tipo:int") == 0)
     {
-        ((char *)p_memory)[i] = ((char *)p_data)[i];
+        return INT_TYPE;
     }
-    return (void *)p_memory + data_size;
+    else if (strcmp(var_type_text, "Tipo:char") == 0)
+    {
+        return CHAR_TYPE;
+    }
+
+    printf("get_data_type() -> Invalid Type\n");
+    return ERROR_TYPE;
 }
 /*************** END OF FUNCTIONS ***************************************************************************/

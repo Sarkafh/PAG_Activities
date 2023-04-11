@@ -22,7 +22,8 @@
 /******************************************************************************
 * Preprocessor Constants
 *******************************************************************************/
-
+#define RGEN_ERROR  (-1)
+#define RGEN_SUCCESS (0)
 
 /******************************************************************************
 * Configuration Constants
@@ -47,10 +48,11 @@ typedef enum {ERROR_TYPE, INT_TYPE, CHAR_TYPE} var_type_t;
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
-void print_reverse_generic(void * p_data, var_type_t data_type, int num_of_data);
-var_type_t get_data_type(char var_type_text[]);
-int get_type_size(var_type_t var_type);
-
+int init_gen_data_storage(var_type_t data_type);
+void insert_gen_data(void * p_data);
+void deinit_data_storage(void);
+void print_reverse_generic(void);
+void print_data_type(void);
 
 #endif
 /*** End of File **************************************************************/

@@ -1,6 +1,6 @@
 /*******************************************************************************
-* Title                 :   aplicacao  
-* Filename              :   aplicacao.c
+* Title                 :   rgen  
+* Filename              :   rgen.c
 * Author                :   Gabriel Tomio
 * Origin Date           :   01/04/2023
 * Version               :   1.0.0
@@ -21,7 +21,6 @@
 * Module Preprocessor Constants
 *******************************************************************************/
 
-
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
@@ -41,16 +40,50 @@
 /******************************************************************************
 * Function Definitions
 *******************************************************************************/
+int init_gen_data_storage(var_type_t data_type)
+{
+    generic_data_info.data_type = data_type;
+    generic_data_info.data_size = get_type_size(data_type);
 
-void print_reverse_generic(void * p_data, var_type_t data_type, int num_of_data)
-{   
-    print_data_type(data_type);
-
-    for(int i = (num_of_data - 1); i >= 0; i--)
+    if(generic_data_info.data_size == -1)
     {
-        if(data_type == INT_TYPE)
+        return RGEN_ERROR;
+    }
+
+    generic_data_info.data_count = 0;
+    generic_data_info.p_start_address = malloc(MAX_ALOCATED_SIZE*generic_data_info.data_size);
+    generic_data_info.p_last_address = generic_data_info.p_start_address;
+
+    return RGEN_SUCCESS;
+}
+
+void insert_gen_data(void * p_data)
+{
+    generic_data_info.data_count++;
+    generic_data_info.p_last_address = store_data(generic_data_info.p_last_address, p_data, generic_data_info.data_size);
+}
+
+void deinit_data_storage(void)
+{
+    free(generic_data_info.p_start_address);
+}
+
+void * store_data(void * p_memory, void * p_data, int data_size)
+{
+    for(int i = 0; i < data_size; i++)
+    {
+        ((char *)p_memory)[i] = ((char *)p_data)[i];
+    }
+    return (void *)p_memory + data_size;
+}
+
+void print_reverse_generic(void)
+{   
+    for(int i = (generic_data_info.data_count - 1); i >= 0; i--)
+    {
+        if(generic_data_info.data_type == INT_TYPE)
         {
-            int number = ((int*)p_data)[i];
+            int number = ((int*)generic_data_info.p_start_address)[i];
             int remainder;
             printf("(");
             while (number != 0) 
@@ -63,19 +96,19 @@ void print_reverse_generic(void * p_data, var_type_t data_type, int num_of_data)
         }
         else
         {
-            printf("(%c);\n",((char*)p_data)[i]);
+            printf("(%c);\n",((char*)generic_data_info.p_start_address)[i]);
         }
     }
 }
 
-void print_data_type(var_type_t data_type)
+void print_data_type(void)
 {
     printf("Tipo_do_dado:");
-    if(data_type == INT_TYPE)
+    if(generic_data_info.data_type == INT_TYPE)
     {
         printf("int;\n");
     }
-    else if(data_type == CHAR_TYPE)
+    else if(generic_data_info.data_type == CHAR_TYPE)
     {
         printf("char;\n");
     }
@@ -102,20 +135,5 @@ int get_type_size(var_type_t var_type)
             return -1;
         break;
     }
-}
-
-var_type_t get_data_type(char var_type_text[])
-{
-    if(strcmp(var_type_text, "Tipo:int") == 0)
-    {
-        return INT_TYPE;
-    }
-    else if (strcmp(var_type_text, "Tipo:char") == 0)
-    {
-        return CHAR_TYPE;
-    }
-
-    printf("get_data_type() -> Invalid Type\n");
-    return ERROR_TYPE;
 }
 /*************** END OF FUNCTIONS ***************************************************************************/
