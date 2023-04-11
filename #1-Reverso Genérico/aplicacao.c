@@ -8,45 +8,29 @@
 * Notes                 :   Reverse generic input
 *
 *******************************************************************************/
+
 /******************************************************************************
 * Includes
 *******************************************************************************/
 #include "aplicacao.h"
 
 /******************************************************************************
-* Module Typedefs
-*******************************************************************************/
-
-/******************************************************************************
-* Module Variable Definitions
-*******************************************************************************/
-
-/******************************************************************************
-* Function Prototypes
-*******************************************************************************/
-
-/******************************************************************************
 * Function Definitions
 *******************************************************************************/
-// TODO: UPDATE AND COPY THESE FOR EACH NON_TRIVIAL FUNCTION
+
 /** ****************************************************************************
-* Function : Dio_Init()
-* @description: This function is used to initialize the Dio based on the configuration table
-*  defined in dio_cfg module.  
-*
-* @return 		
-*
+* Function : main(int argc, char **argv)
+* @description: Processes the input file and prints its reverse
+* @return 		FINISHED_ERROR -> finished operation with error
+                FINISHED_SUCCESS -> finished operation successfully
 *******************************************************************************/
 int main(int argc, char **argv)
 {
-    char input_text[10];
     char * input_type;
 
     char line[MAXIMUM_SIZE_OF_LINE];
 
     char * p_new_value;
-
-    int num_of_data = 0;
 
     if(fgets(line, MAXIMUM_SIZE_OF_LINE, stdin) == NULL)
     {
@@ -76,9 +60,7 @@ int main(int argc, char **argv)
 
         while ((p_new_value != NULL) && (strcmp(p_new_value, "\n") != 0))
         {
-            num_of_data ++;
-
-            if(data_type == INT_TYPE)
+            if(get_gen_type() == INT_TYPE)
             {
                 temp_int = atoi(p_new_value);
                 temp_pointer = (void *) &temp_int;
@@ -103,6 +85,14 @@ int main(int argc, char **argv)
     return FINISHED_SUCCESS;
 }
 
+
+/** ****************************************************************************
+* Function : get_data_type()
+* @description: Convertes the input text into a var_type_t type
+* @return 		INT_TYPE -> Input data will be int
+                CHAR_TYPE -> Input data will be char
+                ERROR_TYPE -> Unknown input data
+*******************************************************************************/
 var_type_t get_data_type(char var_type_text[])
 {
     if(strcmp(var_type_text, "Tipo:int") == 0)

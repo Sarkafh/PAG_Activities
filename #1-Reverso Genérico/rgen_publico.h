@@ -7,11 +7,7 @@
 * Compiler              :   GCC
 * Notes                 :   None
 *****************************************************************************/
-/** @file aplicacao.h
- *  @brief This module TODO: WHAT DO I DO?
- * 
- *  This is the header file for the definition TODO: MORE ABOUT ME!
- */
+
 #ifndef RGEN_PUBLICO_H_
 #define RGEN_PUBLICO_H_
 
@@ -53,6 +49,7 @@ void insert_gen_data(void * p_data);
 void deinit_data_storage(void);
 void print_reverse_generic(void);
 void print_data_type(void);
+var_type_t get_gen_type(void);
 
 #endif
 /*** End of File **************************************************************/

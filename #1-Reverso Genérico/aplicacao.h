@@ -7,11 +7,6 @@
 * Compiler              :   GCC
 * Notes                 :   None
 *****************************************************************************/
-/** @file aplicacao.h
- *  @brief This module TODO: WHAT DO I DO?
- * 
- *  This is the header file for the definition TODO: MORE ABOUT ME!
- */
 #ifndef APLICACAO_H_
 #define APLICACAO_H_
 

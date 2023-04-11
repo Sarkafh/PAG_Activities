@@ -7,11 +7,7 @@
 * Compiler              :   GCC
 * Notes                 :   None
 *****************************************************************************/
-/** @file aplicacao.h
- *  @brief This module TODO: WHAT DO I DO?
- * 
- *  This is the header file for the definition TODO: MORE ABOUT ME!
- */
+
 #ifndef RGEN_PRIVADO_H_
 #define RGEN_PRIVADO_H_
 
