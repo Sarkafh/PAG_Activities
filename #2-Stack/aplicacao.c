@@ -15,6 +15,33 @@ typedef struct
 }colored_stack_t;
 
 
+#define MAX_NUMBER_OF_STACKS    NUM_OF_COLORS
+#define MAXIMUM_SIZE_OF_LINE    1000
+#define FINISHED_ERROR          1
+#define FINISHED_SUCCESS        0
+
+#define AZUL_TEXT           "az"
+#define AMARELO_TEXT        "am"
+#define ANIL_TEXT           "an"
+#define PRETA_TEXT          "pr"
+#define BRANCA_TEXT         "br"
+#define VERDE_TEXT          "ve"
+#define VERMELHO_TEXT       "vo"
+#define LILAS_TEXT          "li"
+#define ROSA_TEXT           "ro"
+#define LARANJA_TEXT        "lj"
+#define SIZE_OF_COLOR_TEXT  strlen(AZUL_TEXT)
+
+#define STACK_TOKEN         "PC"
+#define SIZE_OF_STACK_TOKEN strlen(STACK_TOKEN)
+
+#define PIECE_TOKEN         "p"
+#define SIZE_OF_PIECE_TOKEN strlen(PIECE_TOKEN)
+
+color_t text2color(char input_text[]);
+piece_t text2piece(char input_text[]);
+colored_stack_t text2coloredstack(char input_text[]);
+
 // N=6;
 // Pt=[];
 // PCaz=[pli1;paz2;paz3;paz7;paz8;pan1;pam2;pam3];
@@ -88,12 +115,105 @@ piece_t PCve_init[] = {pve1,pve4,pvo2,pvo3,pve5};
 piece_t PCvo_init[] = {pvo1,pve2,pve3,pvo4};
 piece_t PCam_init[] = {pam1,paz4,paz5,paz6};
 
-colored_stack_t * p_colored_stack[NUM_OF_COLORS];
+colored_stack_t * p_colored_stack[MAX_NUMBER_OF_STACKS];
 piece_t * p_colored_stack_init[NUM_OF_COLORS];
 int stack_size[NUM_OF_STACKS] = {TEMP_SIZE, PCAZ_SIZE, PCAN_SIZE, PCLI_SIZE, PCVE_SIZE, PCVO_SIZE, PCAM_SIZE};
 
 int main(int argc, char **argv)
 {
+    char line[MAXIMUM_SIZE_OF_LINE];
+    int line_counter = 0;
+    int temp_stack_size = 0;
+    int colored_stack_idx = 0;
+
+    while(fgets(line, MAXIMUM_SIZE_OF_LINE, stdin) != NULL)
+    {
+        line_counter++;
+        if (line_counter == 1)
+        {
+            
+        }
+        else if (line_counter == 2)
+        {
+
+        }
+        else
+        {
+            /* Find stack color */
+            char stack_color_text[SIZE_OF_STACK_TOKEN + SIZE_OF_COLOR_TEXT];
+
+            for (int i = 0; i < strlen(stack_color_text); i++)
+            {
+                stack_color_text[i] = line[i];
+            }
+
+            *p_colored_stack[colored_stack_idx] = text2coloredstack(stack_color_text);
+
+            int piece_start_index = 0;
+            int piece_stop_index = 0;
+
+            for (int i = 0; i < strlen(line); i++)
+            {
+                if(line[i] == "[")
+                {
+                    piece_start_index = i;
+                }
+                else if (line[i] == "]")
+                {
+                    piece_stop_index = i;
+                    break;
+                }
+            }
+
+            if(piece_start_index == piece_stop_index-1) // checks if the list is empty
+            {
+                int size_of_current_stack = 1; // It starts in one to count the last piece
+                for (int i = piece_start_index + 1; i < piece_stop_index; i++)
+                {
+                    if(line[i] == ";")
+                    {
+                        size_of_current_stack++;
+                    }
+                }
+
+                stack_size[colored_stack_idx] = size_of_current_stack;
+                stack_create(&(p_colored_stack[colored_stack_idx]->stack_id), sizeof(piece_t), stack_size[colored_stack_idx]);
+
+                temp_stack_size += size_of_current_stack;
+
+                char piece_info_text[SIZE_OF_PIECE_TOKEN + SIZE_OF_COLOR_TEXT];
+                int piece_info_idx = 0;
+                piece_t current_piece;
+                for (int i = piece_start_index + 1; i < piece_stop_index; i++)
+                {
+                    if(line[i] == ";")
+                    {
+                        current_piece = text2piece(piece_info_text);
+                        stack_push(p_colored_stack[colored_stack_idx]->stack_id, (void *)&current_piece);
+                        piece_info_idx = 0;
+                    }
+                    else if (i == piece_stop_index-1)
+                    {
+                        piece_info_text[piece_info_idx] = line[i];
+                        current_piece = text2piece(piece_info_text);
+                        stack_push(p_colored_stack[colored_stack_idx]->stack_id, (void *)&current_piece);
+                        piece_info_idx = 0;
+                    }
+                    else
+                    {
+                        piece_info_text[piece_info_idx] = line[i];
+                        piece_info_idx++;
+                    }
+                }
+            }
+            colored_stack_idx++;
+        }
+        
+    }
+
+
+
+
     int num_of_stacks = NUM_OF_STACKS;
     
     colored_stack_t temp_stack;
@@ -129,13 +249,11 @@ int main(int argc, char **argv)
     p_colored_stack[5] = &PCvo;
     p_colored_stack[6] = &PCam;
 
-    /* OK TESTED */
     for (int stack_idx = 0; stack_idx < num_of_stacks; stack_idx++)
     {
         stack_create(&(p_colored_stack[stack_idx]->stack_id), sizeof(piece_t), stack_size[stack_idx]);
     }
 
-    /* OK TESTED */
     for (int stack_idx = 1; stack_idx < num_of_stacks; stack_idx++) // it starts from 1 to do not use the temp stack
     {
         for (int data_idx = 0; data_idx < stack_size[stack_idx]; data_idx++)
@@ -147,7 +265,7 @@ int main(int argc, char **argv)
     // TODO: HERE COMES THE VERIFICATION IF A SOLUTION EXISTS
     
     // Algorithm initialization
-    int expected_piece_size[NUM_OF_STACKS]; // todo: talvez depois seja preciso alocar o máximo possível de stacks
+    int expected_piece_size[MAX_NUMBER_OF_STACKS]; // todo: talvez depois seja preciso alocar o máximo possível de stacks
     expected_piece_size[0] = 0; // TEMP STACK DOESN'T NEED THIS
 
     for (int stack_idx = 1; stack_idx < num_of_stacks; stack_idx++)
@@ -170,7 +288,7 @@ int main(int argc, char **argv)
                 empty_stack_count = 0;
                 for (int stack_idx_2 = 1; stack_idx_2 < num_of_stacks; stack_idx_2++)
                 {
-                    if (current_piece.color == p_colored_stack[stack_idx_2]->color)
+                    if (current_piece.color == p_colored_stack[stack_idx_2]->color) /* find index to current piece color */
                     {
                         if(current_piece.size == expected_piece_size[stack_idx_2])
                         {
@@ -227,4 +345,89 @@ int main(int argc, char **argv)
     }
 
     return 0;
+}
+
+// AQUI EU RECEBO SÓ O "PCaz"
+colored_stack_t text2coloredstack(char input_text[])
+{
+    colored_stack_t temp_colored_stack;
+    char temp_stack_color[SIZE_OF_COLOR_TEXT];
+
+    for (int i = 0; i < SIZE_OF_COLOR_TEXT; i++)
+    {
+        temp_stack_color[i] = input_text[i + strlen(STACK_TOKEN)];
+    }
+
+    temp_colored_stack.color = text2color(temp_stack_color);
+
+    return temp_colored_stack;
+}
+
+// AQUI EU RECEBO SÓ O "paz1"
+piece_t text2piece(char input_text[])
+{
+    piece_t temp_piece;
+    char temp_piece_color[SIZE_OF_COLOR_TEXT];
+    char temp_piece_size[strlen(input_text) - SIZE_OF_COLOR_TEXT - strlen(PIECE_TOKEN)];
+
+    for (int i = 0; i < SIZE_OF_COLOR_TEXT; i++)
+    {
+        temp_piece_color[i] = input_text[i + strlen(PIECE_TOKEN)];
+    }
+    temp_piece.color = text2color(input_text);
+
+    for (int i = 0; i < strlen(temp_piece_size); i++)
+    {
+        temp_piece_size[i] = input_text[SIZE_OF_COLOR_TEXT + strlen(PIECE_TOKEN) + i];
+    }
+    temp_piece.size = atoi(temp_piece_size);
+    
+    return temp_piece;
+}
+
+// AQUI EU RECEBO SÓ O "az"
+color_t text2color(char input_text[])
+{
+    if(strcmp(input_text, AZUL_TEXT) == 0)
+    {
+        return AZUL;
+    }
+    else if(strcmp(input_text, AMARELO_TEXT) == 0)
+    {
+        return AMARELA;
+    }
+    else if(strcmp(input_text, ANIL_TEXT) == 0)
+    {
+        return ANIL;
+    }
+    else if(strcmp(input_text, PRETA_TEXT) == 0)
+    {
+        return PRETA;
+    }
+    else if(strcmp(input_text, BRANCA_TEXT) == 0)
+    {
+        return BRANCA;
+    }
+    else if(strcmp(input_text, VERDE_TEXT) == 0)
+    {
+        return VERDE;
+    }
+    else if(strcmp(input_text, VERMELHO_TEXT) == 0)
+    {
+        return VERMELHO;
+    }
+    else if(strcmp(input_text, LILAS_TEXT) == 0)
+    {
+        return LILAS;
+    }
+    else if(strcmp(input_text, ROSA_TEXT) == 0)
+    {
+        return ROSA;
+    }
+    else if(strcmp(input_text, LARANJA_TEXT) == 0)
+    {
+        return LARANJA;
+    }
+
+    return NO_COLOR;
 }
