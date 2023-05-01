@@ -1,0 +1,8 @@
+N=6;
+Pt=[];
+PCaz=[pli1;paz2;paz3;paz7;paz8;pan1;pam2;pam3];
+PCan=[pam4;pan2;pan3;pan4;pan5;pan6;pan7;pan8];
+PCli=[paz1;pli2;pli3;pli4;pli5;pli6;pli7;pli8];
+PCve=[pve1;pve4;pvo2;pvo3;pve5];
+PCvo=[pvo1;pve2;pve3;pvo4];
+PCam=[pam1;paz4;paz5;paz6];
