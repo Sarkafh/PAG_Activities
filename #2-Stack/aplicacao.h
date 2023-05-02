@@ -26,7 +26,7 @@
 #define MAXIMUM_SIZE_OF_LINE    1000
 #define FINISHED_ERROR          1
 #define FINISHED_SUCCESS        0
-#define MAX_IMPOSSIBLE_MOVES    20
+#define MAX_IMPOSSIBLE_MOVES    100
 
 /* Piece attributes */
 #define AZUL_TEXT           "az"
@@ -87,8 +87,12 @@ typedef struct
 * Function Prototypes
 *******************************************************************************/
 color_t text2color(char input_text[]);
+void color2text(color_t color_temp, char * temp_text);
 piece_t text2piece(char input_text[]);
+void piece2text(piece_t piece_temp, char * temp_text);
 colored_stack_t text2coloredstack(char input_text[]);
+void coloredstack2text(colored_stack_t colored_stack_temp, char * temp_text);
+
 
 #endif
 /*** End of File **************************************************************/

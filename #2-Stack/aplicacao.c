@@ -82,7 +82,7 @@ int main(int argc, char **argv)
                 stack_create(&(p_colored_stack[colored_stack_idx]->stack_id), sizeof(piece_t), stack_size[colored_stack_idx]);
                 temp_stack_size += size_of_current_stack;
 
-                char piece_info_text[SIZE_OF_PIECE_TOKEN + SIZE_OF_COLOR_TEXT];
+                char piece_info_text[SIZE_OF_PIECE_TOKEN + SIZE_OF_COLOR_TEXT+1];
                 int piece_info_idx = 0;
                 piece_t current_piece;
                 for (int i = piece_start_index + 1; i < piece_stop_index; i++)
@@ -116,8 +116,6 @@ int main(int argc, char **argv)
     stack_create(&(p_colored_stack[TEMP_STACK_IDX]->stack_id), sizeof(piece_t), stack_size[TEMP_STACK_IDX]);
 
     num_of_stacks = colored_stack_idx;
-   
-    // TODO: HERE COMES THE VERIFICATION IF A SOLUTION EXISTS
     
     /* Algorithm initialization */
     int expected_piece_size[MAX_NUMBER_OF_STACKS];
@@ -149,10 +147,11 @@ int main(int argc, char **argv)
                     {
                         if(current_piece.size == expected_piece_size[stack_idx_2])
                         {
-                            b_no_possible_moves_flag = 0;
+                            no_possible_moves_counter = 0;
                             expected_piece_size[stack_idx_2]--;
                             stack_pop(p_colored_stack[stack_idx]->stack_id, (void*) &current_piece);
                             stack_push(p_colored_stack[TEMP_STACK_IDX]->stack_id, (void*) &current_piece);
+                            break;
                         }
                         else
                         {
@@ -166,7 +165,7 @@ int main(int argc, char **argv)
             }
             else
             {
-                if(++empty_stack_count >= (num_of_stacks-1))
+                if(++empty_stack_count >= (num_of_stacks))
                 {
                     b_stack_temp_finished = 1;
                     break;
@@ -176,25 +175,77 @@ int main(int argc, char **argv)
     }
 
     /* Unstack the pieces stored on the temporary stack onto their correct stack colors */
-    for(int piece_idx = 0; piece_idx < stack_size[TEMP_STACK_IDX]; piece_idx++)
+    if (b_no_possible_moves_flag != 1)
     {
-        if(stack_pop(p_colored_stack[TEMP_STACK_IDX]->stack_id, (void*) &current_piece) != STACK_ERROR)
+        for(int piece_idx = 0; piece_idx < stack_size[TEMP_STACK_IDX]; piece_idx++)
         {
-            for (int stack_idx = 1; stack_idx <= num_of_stacks; stack_idx++)
+            if(stack_pop(p_colored_stack[TEMP_STACK_IDX]->stack_id, (void*) &current_piece) != STACK_ERROR)
             {
-                if(current_piece.color == p_colored_stack[stack_idx]->color)
+                for (int stack_idx = 1; stack_idx <= num_of_stacks; stack_idx++)
                 {
-                    stack_push(p_colored_stack[stack_idx]->stack_id, (void*) &current_piece);
-                    break;
+                    if(current_piece.color == p_colored_stack[stack_idx]->color)
+                    {
+                        stack_push(p_colored_stack[stack_idx]->stack_id, (void*) &current_piece);
+                        break;
+                    }
                 }
             }
-        }
-        else
-        {
-            break;
+            else
+            {
+                break;
+            }
         }
     }
     /* Algorithm End */
+
+    /* Print Output stacks */
+    if (b_no_possible_moves_flag == 1)
+    {
+        char * print_text;
+        print_text = (char *)malloc(10*sizeof(char));
+        printf("Pt=[]\n");
+        for (int stack_idx = 1; stack_idx <= num_of_stacks; stack_idx++)
+        {
+            coloredstack2text(*p_colored_stack[stack_idx], print_text);
+            printf("%s=[];\n", print_text);
+        }
+        free(print_text);
+    }
+    else
+    {
+        printf("Pt=[]\n");
+        char * print_text;
+        print_text = (char *)malloc(10*sizeof(char));
+        for (int stack_idx = 1; stack_idx <= num_of_stacks; stack_idx++)
+        {
+            coloredstack2text(*p_colored_stack[stack_idx], print_text);
+            printf("%s=[",print_text);
+
+            /* Stack onto the temp stack to revert the print order */
+            for (int piece_idx = 0; piece_idx < stack_size[stack_idx]; piece_idx++)
+            {
+                stack_pop(p_colored_stack[stack_idx]->stack_id, (void*) &current_piece);
+                stack_push(p_colored_stack[TEMP_STACK_IDX]->stack_id, (void*) &current_piece);
+            }
+
+            for (int piece_idx = 0; piece_idx < stack_size[stack_idx]; piece_idx++)
+            {
+                stack_pop(p_colored_stack[TEMP_STACK_IDX]->stack_id, (void*) &current_piece);
+                piece2text(current_piece, print_text);
+                if (piece_idx == stack_size[stack_idx] - 1)
+                {
+                    printf("%s", print_text);
+                }
+                else
+                {
+                    printf("%s;", print_text);
+                } 
+            }
+            printf("];\n");
+        }
+        free(print_text);
+    }
+    
    
     for (int stack_idx = 0; stack_idx <= num_of_stacks; stack_idx++)
     {
@@ -231,6 +282,29 @@ colored_stack_t text2coloredstack(char input_text[])
 
 
 /** ****************************************************************************
+* Function : coloredstack2text()
+* @description: Converts the input text into a colored_stack_t type
+* @note:        Here the input_text must be similar to "PCaz"
+* @return 		colored_stack_t object
+*******************************************************************************/
+void coloredstack2text(colored_stack_t colored_stack_temp, char * temp_text)
+{
+    char color_text[SIZE_OF_COLOR_TEXT +1];
+    for (int i = 0; i < SIZE_OF_STACK_TOKEN; i++)
+    {
+        temp_text[i] = STACK_TOKEN[i];
+    }
+
+    color2text(colored_stack_temp.color, color_text);
+
+    for (int i = 0; i < strlen(color_text); i++)
+    {
+        temp_text[i+SIZE_OF_STACK_TOKEN] = color_text[i];
+    }
+}
+
+
+/** ****************************************************************************
 * Function : text2piece()
 * @description: Converts the input text into a piece_t type
 * @note:        Here the input_text must be similar to "paz1"
@@ -240,8 +314,8 @@ piece_t text2piece(char input_text[])
 {
     piece_t temp_piece;
     char temp_piece_color[] = AZUL_TEXT;
-    char temp_piece_size[strlen(input_text) - SIZE_OF_COLOR_TEXT - SIZE_OF_STACK_TOKEN];
-    int piece_size_size = strlen(input_text) - SIZE_OF_COLOR_TEXT - SIZE_OF_STACK_TOKEN;
+    char temp_piece_size[strlen(input_text) - SIZE_OF_COLOR_TEXT - SIZE_OF_PIECE_TOKEN];
+    int piece_size_size = strlen(input_text) - SIZE_OF_COLOR_TEXT - SIZE_OF_PIECE_TOKEN;
 
     for (int i = 0; i < SIZE_OF_COLOR_TEXT; i++)
     {
@@ -251,13 +325,49 @@ piece_t text2piece(char input_text[])
 
     for (int i = 0; i < piece_size_size; i++)
     {
-        temp_piece_size[i] = input_text[SIZE_OF_COLOR_TEXT + SIZE_OF_STACK_TOKEN + i];
+        temp_piece_size[i] = input_text[SIZE_OF_COLOR_TEXT + SIZE_OF_PIECE_TOKEN + i];
     }
+    printf("input_text: %s\n", input_text);
+    printf("size_text: %s\n", temp_piece_size);
     temp_piece.size = atoi(temp_piece_size);
     
     return temp_piece;
 }
 
+
+/** ****************************************************************************
+* Function : piece2text()
+* @description: Converts the input text into a piece_t type
+* @note:        Here the input_text must be similar to "paz1"
+* @return 		piece_t object
+*******************************************************************************/
+void piece2text(piece_t piece_temp, char * temp_text)
+{
+    char color_text[SIZE_OF_COLOR_TEXT +1];
+    char piece_size_text[10];
+    int text_offset=0;
+
+    for (int i = 0; i < SIZE_OF_PIECE_TOKEN; i++)
+    {
+        temp_text[i] = PIECE_TOKEN[i];
+    }
+
+    text_offset = SIZE_OF_PIECE_TOKEN;
+    color2text(piece_temp.color, color_text);
+
+    for (int i = 0; i < strlen(color_text); i++)
+    {
+        temp_text[i+text_offset] = color_text[i];
+    }
+
+    text_offset += strlen(color_text);
+    sprintf(piece_size_text, "%d", piece_temp.size);
+    // itoa(piece_temp.size, piece_size_text, 10);
+    for (int i = 0; i < strlen(piece_size_text); i++)
+    {
+        temp_text[i+text_offset] = piece_size_text[i];
+    }
+}
 
 /** ****************************************************************************
 * Function : text2color()
@@ -310,4 +420,60 @@ color_t text2color(char input_text[])
 
     return NO_COLOR;
 }
+
+/** ****************************************************************************
+* Function : color2text()
+* @description: Converts the input text into a color_t type
+* @note:        Here the input_text must be similar to "az"
+* @return 		color_t object
+*******************************************************************************/
+void color2text(color_t color_temp, char * temp_text)
+{
+    switch (color_temp) 
+    {
+        case AZUL:
+            strcpy(temp_text, AZUL_TEXT);
+        break;
+
+        case AMARELA:
+            strcpy(temp_text, AMARELO_TEXT);
+        break;
+
+        case ANIL:
+            strcpy(temp_text, ANIL_TEXT);
+        break;
+
+        case PRETA:
+            strcpy(temp_text, PRETA_TEXT);
+        break;
+
+        case BRANCA:
+            strcpy(temp_text, BRANCA_TEXT);
+        break;
+
+        case VERDE:
+            strcpy(temp_text, VERDE_TEXT);
+        break;
+
+        case VERMELHO:
+            strcpy(temp_text, VERMELHO_TEXT);
+        break;
+
+        case LILAS:
+            strcpy(temp_text, LILAS_TEXT);
+        break;
+
+        case ROSA:
+            strcpy(temp_text, ROSA_TEXT);
+        break;
+
+        case LARANJA:
+            strcpy(temp_text, LARANJA_TEXT);
+        break;
+
+        default:
+        break;
+    }
+}
+
 /*************** END OF FUNCTIONS ***************************************************************************/
