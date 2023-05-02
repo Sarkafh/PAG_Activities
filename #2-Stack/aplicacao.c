@@ -1,68 +1,43 @@
+/*******************************************************************************
+* Title                 :   aplicacao  
+* Filename              :   aplicacao.c
+* Author                :   Gabriel Tomio
+* Origin Date           :   01/05/2023
+* Version               :   1.0.0
+* Compiler              :   GCC
+* Notes                 :   Game of Towers
+*
+*******************************************************************************/
+
+/******************************************************************************
+* Includes
+*******************************************************************************/
 #include "aplicacao.h"
 
-typedef enum {NO_COLOR, AZUL, AMARELA, ANIL, PRETA, BRANCA, VERDE, VERMELHO, LILAS, ROSA, LARANJA, NUM_OF_COLORS} color_t;
-
-typedef struct
-{
-    color_t color;
-    int size;
-}piece_t;
-
-typedef struct 
-{
-    p_stack_t stack_id;
-    color_t color;
-}colored_stack_t;
+/******************************************************************************
+* Function Definitions
+*******************************************************************************/
 
 
-#define MAX_NUMBER_OF_STACKS    NUM_OF_COLORS
-#define MAXIMUM_SIZE_OF_LINE    1000
-#define FINISHED_ERROR          1
-#define FINISHED_SUCCESS        0
-
-#define MAX_IMPOSSIBLE_MOVES    20
-
-#define AZUL_TEXT           "az"
-#define AMARELO_TEXT        "am"
-#define ANIL_TEXT           "an"
-#define PRETA_TEXT          "pr"
-#define BRANCA_TEXT         "br"
-#define VERDE_TEXT          "ve"
-#define VERMELHO_TEXT       "vo"
-#define LILAS_TEXT          "li"
-#define ROSA_TEXT           "ro"
-#define LARANJA_TEXT        "lj"
-#define SIZE_OF_COLOR_TEXT  strlen(AZUL_TEXT)
-
-#define STACK_TOKEN         "PC"
-#define SIZE_OF_STACK_TOKEN strlen(STACK_TOKEN)
-
-#define PIECE_TOKEN         "p"
-#define SIZE_OF_PIECE_TOKEN strlen(PIECE_TOKEN)
-
-#define TEMP_STACK_IDX      0
-
-color_t text2color(char input_text[]);
-piece_t text2piece(char input_text[]);
-colored_stack_t text2coloredstack(char input_text[]);
-
-colored_stack_t * p_colored_stack[MAX_NUMBER_OF_STACKS];
-int stack_size[MAX_NUMBER_OF_STACKS];
-
+/** ****************************************************************************
+* Function : main(int argc, char **argv)
+* @description: gets the towers from an input file and reorders them
+* @return 		FINISHED_ERROR -> finished operation with error
+                FINISHED_SUCCESS -> finished operation successfully
+*******************************************************************************/
 int main(int argc, char **argv)
 {
+    colored_stack_t * p_colored_stack[MAX_NUMBER_OF_STACKS];
+    int stack_size[MAX_NUMBER_OF_STACKS];
     char line[MAXIMUM_SIZE_OF_LINE];
     int line_counter = 0;
     int temp_stack_size = 0;
     int colored_stack_idx = 0;
     int num_of_stacks = 0;
 
-    printf("line_counter = %d\n", line_counter);
-
     while((fgets(line, MAXIMUM_SIZE_OF_LINE, stdin) != NULL))
     {
         line_counter++;
-        printf("line_counter = %d\n", line_counter);
         if ((line_counter != 1)&&(line_counter != 2)&&(strcmp(line, "\n") != 0))
         {
             /* Find stack color */
@@ -92,7 +67,7 @@ int main(int argc, char **argv)
                 }
             }
 
-            if(piece_start_index != piece_stop_index-1) // checks if the list is empty
+            if(piece_start_index != piece_stop_index-1) // check if the list is empty
             {
                 int size_of_current_stack = 1; // It starts in one to count the last piece
                 for (int i = piece_start_index + 1; i < piece_stop_index; i++)
@@ -141,33 +116,19 @@ int main(int argc, char **argv)
     stack_create(&(p_colored_stack[TEMP_STACK_IDX]->stack_id), sizeof(piece_t), stack_size[TEMP_STACK_IDX]);
 
     num_of_stacks = colored_stack_idx;
-    printf("num_of_stacks = %d\n", num_of_stacks);
-
-    // piece_t current_piece2; // todo: remove
-    // for (int stackkkkkk_idx = 1; stackkkkkk_idx < 7; stackkkkkk_idx++)
-    // {
-    //     printf("stack:%d\n", stackkkkkk_idx);
-    //     for (int piece_idx = 0; piece_idx < stack_size[stackkkkkk_idx]; piece_idx++)
-    //     {
-    //         stack_pop(p_colored_stack[stackkkkkk_idx]->stack_id, (void*) &current_piece2);
-    //         printf("piece color: %d; size: %d\n", current_piece2.color, current_piece2.size);
-    //     }
-    // }
-    
-    
+   
     // TODO: HERE COMES THE VERIFICATION IF A SOLUTION EXISTS
     
-    // Algorithm initialization
+    /* Algorithm initialization */
     int expected_piece_size[MAX_NUMBER_OF_STACKS];
-    expected_piece_size[TEMP_STACK_IDX] = 0; // TEMP STACK DOESN'T NEED THIS
+    expected_piece_size[TEMP_STACK_IDX] = 0;
 
     for (int stack_idx = 1; stack_idx <= num_of_stacks; stack_idx++)
     {
         expected_piece_size[stack_idx] = stack_size[stack_idx];
-        printf("expected_piece_size = %d\n", expected_piece_size[stack_idx]);
     }
     
-    // Unstack Algorithm
+    /* Algorithm Start */
     int b_stack_temp_finished = 0;
     piece_t current_piece;
     int empty_stack_count = 0;
@@ -233,29 +194,24 @@ int main(int argc, char **argv)
             break;
         }
     }
-
-    // TODO: REMOVE THIS DEBUG SECTION
-    piece_t current_piece2; // todo: remove
-    for (int stackkkkkk_idx = 1; stackkkkkk_idx < 7; stackkkkkk_idx++)
-    {
-        printf("stack:%d\n", stackkkkkk_idx);
-        for (int piece_idx = 0; piece_idx < stack_size[stackkkkkk_idx]; piece_idx++)
-        {
-            stack_pop(p_colored_stack[stackkkkkk_idx]->stack_id, (void*) &current_piece2);
-            printf("piece color: %d; size: %d\n", current_piece2.color, current_piece2.size);
-        }
-    }
-    //////////////////////////////////
-    
+    /* Algorithm End */
+   
     for (int stack_idx = 0; stack_idx <= num_of_stacks; stack_idx++)
     {
         stack_destroy(&(*p_colored_stack[stack_idx]).stack_id);
+        free(p_colored_stack[stack_idx]);
     }
 
-    return 0;
+    return FINISHED_SUCCESS;
 }
 
-// AQUI EU RECEBO SÓ O "PCaz"
+
+/** ****************************************************************************
+* Function : text2coloredstack()
+* @description: Converts the input text into a colored_stack_t type
+* @note:        Here the input_text must be similar to "PCaz"
+* @return 		colored_stack_t object
+*******************************************************************************/
 colored_stack_t text2coloredstack(char input_text[])
 {
     char temp_stack_color[] = AZUL_TEXT;
@@ -273,12 +229,19 @@ colored_stack_t text2coloredstack(char input_text[])
     return temp_colored_stack;
 }
 
-// AQUI EU RECEBO SÓ O "paz1"
+
+/** ****************************************************************************
+* Function : text2piece()
+* @description: Converts the input text into a piece_t type
+* @note:        Here the input_text must be similar to "paz1"
+* @return 		piece_t object
+*******************************************************************************/
 piece_t text2piece(char input_text[])
 {
     piece_t temp_piece;
-    char temp_piece_color[SIZE_OF_COLOR_TEXT + 1];
-    char temp_piece_size[strlen(input_text) - SIZE_OF_COLOR_TEXT - strlen(PIECE_TOKEN) + 1];
+    char temp_piece_color[] = AZUL_TEXT;
+    char temp_piece_size[strlen(input_text) - SIZE_OF_COLOR_TEXT - SIZE_OF_STACK_TOKEN];
+    int piece_size_size = strlen(input_text) - SIZE_OF_COLOR_TEXT - SIZE_OF_STACK_TOKEN;
 
     for (int i = 0; i < SIZE_OF_COLOR_TEXT; i++)
     {
@@ -286,16 +249,22 @@ piece_t text2piece(char input_text[])
     }
     temp_piece.color = text2color(temp_piece_color);
 
-    for (int i = 0; i < strlen(temp_piece_size); i++)
+    for (int i = 0; i < piece_size_size; i++)
     {
-        temp_piece_size[i] = input_text[SIZE_OF_COLOR_TEXT + strlen(PIECE_TOKEN) + i];
+        temp_piece_size[i] = input_text[SIZE_OF_COLOR_TEXT + SIZE_OF_STACK_TOKEN + i];
     }
     temp_piece.size = atoi(temp_piece_size);
     
     return temp_piece;
 }
 
-// AQUI EU RECEBO SÓ O "az"
+
+/** ****************************************************************************
+* Function : text2color()
+* @description: Converts the input text into a color_t type
+* @note:        Here the input_text must be similar to "az"
+* @return 		color_t object
+*******************************************************************************/
 color_t text2color(char input_text[])
 {
     if(strcmp(input_text, AZUL_TEXT) == 0)
@@ -341,3 +310,4 @@ color_t text2color(char input_text[])
 
     return NO_COLOR;
 }
+/*************** END OF FUNCTIONS ***************************************************************************/
