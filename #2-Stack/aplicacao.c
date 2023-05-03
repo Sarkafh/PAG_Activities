@@ -183,7 +183,7 @@ int main(int argc, char **argv)
             {
                 for (int stack_idx = 1; stack_idx <= num_of_stacks; stack_idx++)
                 {
-                    if(current_piece.color == p_colored_stack[stack_idx]->color)
+                    if(current_piece.color == p_colored_stack[stack_idx]->color) /* find index to current piece color */
                     {
                         stack_push(p_colored_stack[stack_idx]->stack_id, (void*) &current_piece);
                         break;
@@ -203,7 +203,7 @@ int main(int argc, char **argv)
     {
         char * print_text;
         print_text = (char *)malloc(10*sizeof(char));
-        printf("Pt=[]\n");
+        printf("Pt=[];\n");
         for (int stack_idx = 1; stack_idx <= num_of_stacks; stack_idx++)
         {
             coloredstack2text(*p_colored_stack[stack_idx], print_text);
@@ -213,35 +213,42 @@ int main(int argc, char **argv)
     }
     else
     {
-        printf("Pt=[]\n");
+        printf("Pt=[];\n");
         char * print_text;
         print_text = (char *)malloc(10*sizeof(char));
-        for (int stack_idx = 1; stack_idx <= num_of_stacks; stack_idx++)
+        // for (int stack_idx = 1; stack_idx <= num_of_stacks; stack_idx++)
+        for (int color_idx = 1; color_idx <= NUM_OF_COLORS; color_idx++)
         {
-            coloredstack2text(*p_colored_stack[stack_idx], print_text);
-            printf("%s=[",print_text);
-
-            /* Stack onto the temp stack to revert the print order */
-            for (int piece_idx = 0; piece_idx < stack_size[stack_idx]; piece_idx++)
+            for (int stack_idx = 1; stack_idx <= num_of_stacks; stack_idx++)
             {
-                stack_pop(p_colored_stack[stack_idx]->stack_id, (void*) &current_piece);
-                stack_push(p_colored_stack[TEMP_STACK_IDX]->stack_id, (void*) &current_piece);
-            }
-
-            for (int piece_idx = 0; piece_idx < stack_size[stack_idx]; piece_idx++)
-            {
-                stack_pop(p_colored_stack[TEMP_STACK_IDX]->stack_id, (void*) &current_piece);
-                piece2text(current_piece, print_text);
-                if (piece_idx == stack_size[stack_idx] - 1)
+                if(color_idx == p_colored_stack[stack_idx]->color)
                 {
-                    printf("%s", print_text);
+                    coloredstack2text(*p_colored_stack[stack_idx], print_text);
+                    printf("%s=[",print_text);
+
+                    /* Stack onto the temp stack to revert the print order */
+                    for (int piece_idx = 0; piece_idx < stack_size[stack_idx]; piece_idx++)
+                    {
+                        stack_pop(p_colored_stack[stack_idx]->stack_id, (void*) &current_piece);
+                        stack_push(p_colored_stack[TEMP_STACK_IDX]->stack_id, (void*) &current_piece);
+                    }
+
+                    for (int piece_idx = 0; piece_idx < stack_size[stack_idx]; piece_idx++)
+                    {
+                        stack_pop(p_colored_stack[TEMP_STACK_IDX]->stack_id, (void*) &current_piece);
+                        piece2text(current_piece, print_text);
+                        if (piece_idx == stack_size[stack_idx] - 1)
+                        {
+                            printf("%s", print_text);
+                        }
+                        else
+                        {
+                            printf("%s;", print_text);
+                        } 
+                    }
+                    printf("];\n");
                 }
-                else
-                {
-                    printf("%s;", print_text);
-                } 
             }
-            printf("];\n");
         }
         free(print_text);
     }
@@ -327,8 +334,6 @@ piece_t text2piece(char input_text[])
     {
         temp_piece_size[i] = input_text[SIZE_OF_COLOR_TEXT + SIZE_OF_PIECE_TOKEN + i];
     }
-    printf("input_text: %s\n", input_text);
-    printf("size_text: %s\n", temp_piece_size);
     temp_piece.size = atoi(temp_piece_size);
     
     return temp_piece;

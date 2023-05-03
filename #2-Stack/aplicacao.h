@@ -64,7 +64,8 @@
 /******************************************************************************
 * Typedefs
 *******************************************************************************/
-typedef enum {NO_COLOR, AZUL, AMARELA, ANIL, PRETA, BRANCA, VERDE, VERMELHO, LILAS, ROSA, LARANJA, NUM_OF_COLORS} color_t;
+/* Enum em ordem alfabética */
+typedef enum {NO_COLOR, AMARELA, ANIL, AZUL, BRANCA, LARANJA, LILAS, PRETA, ROSA, VERDE, VERMELHO, NUM_OF_COLORS} color_t;
 
 typedef struct
 {
