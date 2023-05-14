@@ -1,0 +1,6 @@
+N=4;
+Fm=[;Mam1;Mam2;Maz1;Mam3;Maz2;Mve1;Mvo1;Mvo2;Mve2;Mvo3;Mve4;Mam4;Mve5;Mve6;Mam5;Mvo4;Mve7;Mam6;Mvo5;Mve8;];
+FCve=[;mve1;mve2;mve3;mve4;mve5;mve6;mve7;mve8;mve9;];
+FCvo=[;mvo1;mvo2;mvo3;mvo4;mvo5;mvo6;mvo7;mvo8;mvo9;];
+FCam=[;mam1;mam2;mam3;mam4;mam5;mam6;mam7;mam8;mam9;];
+FCaz=[;maz1;maz2;maz3;maz4;maz5;maz6;maz7;maz8;maz9;];
