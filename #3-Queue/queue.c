@@ -27,9 +27,9 @@
 *******************************************************************************/
 int queue_create(pp_queue_t pp_queue, int type_size, int num_of_elements)
 {
-    if((num_of_elements < 0)||(type_size <= 0))
+    if((num_of_elements <= 0)||(type_size <= 0))
     {
-        printf("Invalid initialization parameters!\n");
+        // printf("Invalid initialization parameters!\n");
         return QUEUE_ERROR;
     }
 
@@ -37,17 +37,8 @@ int queue_create(pp_queue_t pp_queue, int type_size, int num_of_elements)
 
     if ((*pp_queue) == NULL)
     {
-        printf("Memory could not be allocated!\n");
+        // printf("Memory could not be allocated!\n");
         return QUEUE_ERROR;
-    }
-    if(num_of_elements == UNLIMITED_SIZE_QUEUE)
-    {
-        (*pp_queue)->unlimited_size_flag = 1;
-        num_of_elements = MINIMUM_SIZE_QUEUE;
-    }
-    else
-    {
-        (*pp_queue)->unlimited_size_flag = 0;
     }
 
     (*pp_queue)->p_data = (void*)malloc(num_of_elements*type_size);
@@ -55,7 +46,7 @@ int queue_create(pp_queue_t pp_queue, int type_size, int num_of_elements)
     if ((*pp_queue)->p_data == NULL)
     {
         free((*pp_queue));
-        printf("Memory could not be allocated!\n");
+        // printf("Memory could not be allocated!\n");
         return QUEUE_ERROR;
     }
 
@@ -108,22 +99,8 @@ int queue_enqueue(p_queue_t p_queue, void * p_queue_data)
 
     if (queue_is_full(p_queue) == QUEUE_IS_FULL)
     {
-        if(p_queue->unlimited_size_flag == 0)
-        {
-            printf("The queue is already full!\n");
-            return QUEUE_ERROR;
-        }
-        p_queue_t p_temp_queue = NULL;
-        p_queue->num_of_elements = 2*p_queue->num_of_elements;
-        p_temp_queue = realloc(p_queue->p_data, p_queue->num_of_elements*p_queue->type_size);
-
-        if (p_temp_queue == NULL)
-        {
-            printf("Realloc failed\n");
-            return QUEUE_ERROR;
-        }
-
-        p_queue->p_data = p_temp_queue;
+        // printf("The queue is already full!\n");
+        return QUEUE_ERROR;
     }
 
     new_data_offset = (p_queue->start_index + p_queue->current_size) % p_queue->num_of_elements;
@@ -153,7 +130,7 @@ int queue_dequeue(p_queue_t p_queue, void * p_queue_data)
 
     if (queue_is_empty(p_queue) == QUEUE_IS_EMPTY)
     {
-        printf("No data to be output, queue is empty!\n");
+        // printf("No data to be output, queue is empty!\n");
         return QUEUE_ERROR;
     }
 
@@ -185,7 +162,7 @@ int queue_front(p_queue_t p_queue, void * p_queue_data)
 
     if((queue_is_empty(p_queue) == QUEUE_IS_EMPTY))
     {
-        printf("No data to be output, queue is empty!\n");
+        // printf("No data to be output, queue is empty!\n");
         return QUEUE_ERROR;
     }
 
