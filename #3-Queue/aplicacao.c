@@ -5,7 +5,7 @@
 * Origin Date           :   01/05/2023
 * Version               :   1.0.0
 * Compiler              :   GCC
-* Notes                 :   Game of Towers
+* Notes                 :   Cast factory
 *
 *******************************************************************************/
 
@@ -21,7 +21,6 @@
 
 /** ****************************************************************************
 * Function : main(int argc, char **argv)
-* @description: gets the towers from an input file and reorders them
 * @return 		FINISHED_ERROR -> finished operation with error
                 FINISHED_SUCCESS -> finished operation successfully
 *******************************************************************************/
@@ -219,7 +218,7 @@ int main(int argc, char **argv)
 /** ****************************************************************************
 * Function : text2coloredqueue()
 * @description: Converts the input text into a colored_queue_t type
-* @note:        Here the input_text must be similar to "PCaz"
+* @note:        Here the input_text must be similar to "FCaz"
 * @return 		colored_queue_t object
 *******************************************************************************/
 colored_queue_t text2coloredqueue(char input_text[])
@@ -242,9 +241,7 @@ colored_queue_t text2coloredqueue(char input_text[])
 
 /** ****************************************************************************
 * Function : defectivepiece2text()
-* @description: Converts the input text into a colored_queue_t type
-* @note:        Here the input_text must be similar to "PCaz"
-* @return 		colored_queue_t object
+* @description: Converts the defective_piece_t into a text
 *******************************************************************************/
 void defectivepiece2text(defective_piece_t defective_piece_temp, char * temp_text)
 {
@@ -267,7 +264,7 @@ void defectivepiece2text(defective_piece_t defective_piece_temp, char * temp_tex
     text_offset += SIZE_OF_COLOR_NUMBER_SEPARATOR;
 
     sprintf(piece_size_text, "%d", defective_piece_temp.identifier);
-    // itoa(defective_piece_temp.identifier, piece_size_text, 10);
+
     for (int i = 0; i < strlen(piece_size_text); i++)
     {
         temp_text[i+text_offset] = piece_size_text[i];
@@ -278,10 +275,8 @@ void defectivepiece2text(defective_piece_t defective_piece_temp, char * temp_tex
 }
 
 /** ****************************************************************************
-* Function : coloredqueue2text()
-* @description: Converts the input text into a colored_queue_t type
-* @note:        Here the input_text must be similar to "PCaz"
-* @return 		colored_queue_t object
+* Function : finishedpiecepiece2text()
+* @description: Converts the finished_piece_t into a text
 *******************************************************************************/
 void finishedpiecepiece2text(finished_piece_t finished_piece_temp, char * temp_text)
 {
@@ -312,7 +307,7 @@ void finishedpiecepiece2text(finished_piece_t finished_piece_temp, char * temp_t
 
     text_offset += SIZE_OF_COLOR_NUMBER_SEPARATOR;
     sprintf(piece_size_text, "%d", finished_piece_temp.identifier);
-    // itoa(defective_piece_temp.identifier, piece_size_text, 10);
+
     for (int i = 0; i < strlen(piece_size_text); i++)
     {
         temp_text[i+text_offset] = piece_size_text[i];
@@ -353,9 +348,9 @@ cast_t text2cast(char input_text[])
 
 /** ****************************************************************************
 * Function : text2rawmaterial()
-* @description: Converts the input text into a cast_t type
-* @note:        Here the input_text must be similar to "paz1"
-* @return 		cast_t object
+* @description: Converts the input text into a raw_material_t type
+* @note:        Here the input_text must be similar to "mve1"
+* @return 		raw_material_t object
 *******************************************************************************/
 raw_material_t text2rawmaterial(char input_text[])
 {
@@ -378,40 +373,6 @@ raw_material_t text2rawmaterial(char input_text[])
     
     return temp_raw_material;
 }
-
-/** ****************************************************************************
-* Function : cast2text()
-* @description: Converts the input text into a cast_t type
-* @note:        Here the input_text must be similar to "paz1"
-* @return 		cast_t object
-*******************************************************************************/
-// void cast2text(cast_t cast_temp, char * temp_text)
-// {
-//     char color_text[SIZE_OF_COLOR_TEXT +1];
-//     char piece_size_text[10];
-//     int text_offset=0;
-
-//     for (int i = 0; i < SIZE_OF_CAST_TOKEN; i++)
-//     {
-//         temp_text[i] = CAST_TOKEN[i];
-//     }
-
-//     text_offset = SIZE_OF_CAST_TOKEN;
-//     color2text(cast_temp.color, color_text);
-
-//     for (int i = 0; i < strlen(color_text); i++)
-//     {
-//         temp_text[i+text_offset] = color_text[i];
-//     }
-
-//     text_offset += strlen(color_text);
-//     sprintf(piece_size_text, "%d", cast_temp.size);
-//     // itoa(cast_temp.size, piece_size_text, 10);
-//     for (int i = 0; i < strlen(piece_size_text); i++)
-//     {
-//         temp_text[i+text_offset] = piece_size_text[i];
-//     }
-// }
 
 /** ****************************************************************************
 * Function : text2color()

@@ -115,7 +115,7 @@ int queue_enqueue(p_queue_t p_queue, void * p_queue_data)
 /** ****************************************************************************
 * Function : queue_dequeue(p_queue_t p_queue, void * p_queue_data)
 * @scope: Public
-* @description: Deletes the queue top element
+* @description: Deletes the queue front element
 * @return 		QUEUE_ERROR -> Finished execution with error
                 QUEUE_SUCCESS -> Finished execution with success
 *******************************************************************************/
@@ -174,7 +174,7 @@ int queue_front(p_queue_t p_queue, void * p_queue_data)
 
 /** ****************************************************************************
 * Function : queue_is_full(p_queue_t p_queue)
-* @scope: Public
+* @scope: Private
 * @description: Checks if queue is full
 * @return 		QUEUE_IS_FULL -> QUEUE is full
                 QUEUE_IS_NOT_FULL -> QUEUE is not full
@@ -190,7 +190,7 @@ int queue_is_full(p_queue_t p_queue)
 
 /** ****************************************************************************
 * Function : queue_is_empty(p_queue_t p_queue)
-* @scope: Public
+* @scope: Private
 * @description: Checks if queue is empty
 * @return 		QUEUE_IS_EMPTY -> QUEUE is empty
                 QUEUE_IS_NOT_EMPTY -> QUEUE is not empty
@@ -204,7 +204,13 @@ int queue_is_empty(p_queue_t p_queue)
     return QUEUE_IS_NOT_EMPTY;
 }
 
-/* Todo: document this */
+/** ****************************************************************************
+* Function : queue_capacity(p_queue_t p_queue, int * capacity)
+* @scope: Public
+* @description: Returns the allocated capacity of the queue
+* @return 		QUEUE_ERROR -> Finished execution with error
+                QUEUE_SUCCESS -> Finished execution with success
+*******************************************************************************/
 int queue_capacity(p_queue_t p_queue, int * capacity)
 {
     if (p_queue == NULL)
@@ -217,7 +223,13 @@ int queue_capacity(p_queue_t p_queue, int * capacity)
     return QUEUE_SUCCESS;
 }
 
-/* Todo: document this */
+/** ****************************************************************************
+* Function : queue_current_size(p_queue_t p_queue, int * current_size)
+* @scope: Public
+* @description: Returns the current size of the queue
+* @return 		QUEUE_ERROR -> Finished execution with error
+                QUEUE_SUCCESS -> Finished execution with success
+*******************************************************************************/
 int queue_current_size(p_queue_t p_queue, int * current_size)
 {
     if (p_queue == NULL)
