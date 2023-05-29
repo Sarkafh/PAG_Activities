@@ -51,42 +51,47 @@ int linked_list_create(pp_linked_list_t pp_linked_list, int type_size, free_func
 }
 
 // todo: document this
-int create_node(ll_node_t * p_node_temp, void * p_data_temp, int type_size)
+int create_node(ll_node_t ** pp_node_temp, void * p_data_temp, int type_size)
 {
-    *p_node_temp = (ll_node_t) malloc(sizeof(ll_node_t));
+    *pp_node_temp = (ll_node_t*) malloc(sizeof(ll_node_t));
 
-    if (*p_node_temp == NULL)
+    if (*pp_node_temp == NULL)
     {
         printf("Node pointer is invalid!\n");
         return LINKED_LIST_ERROR;
     }
 
-    *p_node_temp->p_data = (void *) malloc(type_size);
+    (*pp_node_temp)->p_data = (void *) malloc(type_size);
 
-    if (*p_node_temp == NULL)
+    if (*pp_node_temp == NULL)
     {
         printf("Could not allocate memory to data!\n");
-        free(*p_node_temp);
+        free(*pp_node_temp);
         return LINKED_LIST_ERROR;
     }
 
-    memcpy(*p_node_temp->p_data, p_data_temp, type_size);
-
-    *p_node_temp->p_next_node = NULL;
+    memcpy((*pp_node_temp)->p_data, p_data_temp, type_size);
+    // printf("Alloc Pointer: %p\n", (*pp_node_temp));
+    // printf("Data Pointer: %p\n", (*pp_node_temp)->p_data);
+    (*pp_node_temp)->p_next_node = NULL;
     return LINKED_LIST_SUCCESS;
 }
 
 // todo: document this
-int destroy_node(ll_node_t * p_node_temp, free_function_t p_free_function_temp)
+int destroy_node(ll_node_t ** pp_node_temp, free_function_t p_free_function_temp)
 {
-    if (*p_node_temp == NULL)
+    if (*pp_node_temp == NULL)
     {
         printf("Node pointer is invalid!\n");
         return LINKED_LIST_ERROR;
     }
 
-    p_free_function_temp(p_node_temp->p_data);
-    free(p_node_temp);
+    // printf("Memory pointer: %p\n", (*pp_node_temp));
+    // printf("Data pointer: %p\n", (*pp_node_temp)->p_data);
+    p_free_function_temp((*pp_node_temp)->p_data);
+    free(*pp_node_temp);
+
+    *pp_node_temp = NULL;
 
     return LINKED_LIST_SUCCESS;
 }
@@ -100,22 +105,25 @@ int destroy_node(ll_node_t * p_node_temp, free_function_t p_free_function_temp)
 *******************************************************************************/
 int linked_list_destroy(pp_linked_list_t pp_linked_list)
 {
+    ll_node_t * p_node_to_destroy;
+    ll_node_t * p_next_node_to_destroy;
+    
     if ((*pp_linked_list == NULL) || (pp_linked_list == NULL))
     {
         printf("Linked list pointer is invalid!\n");
         return LINKED_LIST_ERROR;
     }
 
-    ll_node_t * p_node_to_destroy;
     p_node_to_destroy = (*pp_linked_list)->descriptor.p_first_node;
 
     for (int i = 0; i < (*pp_linked_list)->current_size; i++)
     {
-        if(destroy_node(p_node_to_destroy, (*pp_linked_list)->p_free_function)) 
+        p_next_node_to_destroy = p_node_to_destroy->p_next_node;
+        if(destroy_node(&p_node_to_destroy, (*pp_linked_list)->p_free_function)) 
         {
             break;
         }
-        p_node_to_destroy = p_node_to_destroy->p_next_node;
+        p_node_to_destroy = p_next_node_to_destroy;
     }
 
     free(*pp_linked_list);
@@ -174,7 +182,7 @@ int linked_list_insert(p_linked_list_t p_linked_list, void * p_linked_list_data,
         ll_node_t * p_node_on_prev_idx;
         p_node_on_prev_idx = p_linked_list->descriptor.p_first_node;
 
-        for (int i = 0; i < position_idx; i++) // Go to the index previous to the desired one
+        for (int i = 0; i < position_idx-1; i++) // Go to the index previous to the desired one
         {
             p_node_on_prev_idx = p_node_on_prev_idx->p_next_node;
         }
@@ -250,7 +258,7 @@ int linked_list_remove(p_linked_list_t p_linked_list, void * p_linked_list_data,
     }
 
     memcpy(p_linked_list_data, p_node_to_destroy->p_data, p_linked_list->type_size);
-    destroy_node(p_node_to_destroy, p_linked_list->p_free_function);
+    destroy_node(&p_node_to_destroy, p_linked_list->p_free_function);
     
     p_linked_list->current_size--;
 

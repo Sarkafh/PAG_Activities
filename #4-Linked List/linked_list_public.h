@@ -49,10 +49,7 @@ int linked_list_destroy(pp_linked_list_t pp_linked_list);
 int linked_list_insert(p_linked_list_t p_linked_list, void * p_linked_list_data, int position_idx);
 int linked_list_remove(p_linked_list_t p_linked_list, void * p_linked_list_data, int position_idx);
 int linked_list_get(p_linked_list_t p_linked_list, void * p_linked_list_data, int position_idx);
-
-
-
-
+int linked_list_print(p_linked_list_t p_linked_list, print_function_t p_print_function, int position_idx);
 
 #endif
 /*** End of File **************************************************************/
