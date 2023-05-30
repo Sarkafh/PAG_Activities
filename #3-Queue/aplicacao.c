@@ -203,10 +203,12 @@ int main(int argc, char **argv)
     }
     printf("]\n");
     
+    free(print_text);
 
     for (int queue_idx = 0; queue_idx < num_of_raw_materials; queue_idx++)
     {
         queue_destroy(&raw_material_queue[queue_idx]->queue_id);
+        free(raw_material_queue[queue_idx]);
     }
     queue_destroy(&finished_pieces.queue_id);
     queue_destroy(&defective_pieces.queue_id);
@@ -328,19 +330,21 @@ cast_t text2cast(char input_text[])
 {
     cast_t temp_cast;
     char temp_cast_color[] = AZUL_TEXT;
-    char temp_cast_identifier[strlen(input_text) - SIZE_OF_COLOR_TEXT - SIZE_OF_CAST_TOKEN];
     int piece_identifier_size = strlen(input_text) - SIZE_OF_COLOR_TEXT - SIZE_OF_CAST_TOKEN;
 
     for (int i = 0; i < SIZE_OF_COLOR_TEXT; i++)
     {
-        temp_cast_color[i] = input_text[i + strlen(CAST_TOKEN)];
+        temp_cast_color[i] = input_text[i + SIZE_OF_CAST_TOKEN];
     }
     temp_cast.color = text2color(temp_cast_color);
+
+    char temp_cast_identifier[piece_identifier_size + 1];  // Add 1 for null character
 
     for (int i = 0; i < piece_identifier_size; i++)
     {
         temp_cast_identifier[i] = input_text[SIZE_OF_COLOR_TEXT + SIZE_OF_CAST_TOKEN + i];
     }
+    temp_cast_identifier[piece_identifier_size] = '\0';  // Add null character
     temp_cast.identifier = atoi(temp_cast_identifier);
     
     return temp_cast;
@@ -356,19 +360,21 @@ raw_material_t text2rawmaterial(char input_text[])
 {
     raw_material_t temp_raw_material;
     char temp_raw_mat_color[] = AZUL_TEXT;
-    char temp_raw_mat_identifier[strlen(input_text) - SIZE_OF_COLOR_TEXT - SIZE_OF_CAST_TOKEN];
-    int piece_identifier_size = strlen(input_text) - SIZE_OF_COLOR_TEXT - SIZE_OF_CAST_TOKEN;
+    int piece_identifier_size = strlen(input_text) - SIZE_OF_COLOR_TEXT - SIZE_OF_RAW_MATERIAL_TOKEN;
 
     for (int i = 0; i < SIZE_OF_COLOR_TEXT; i++)
     {
-        temp_raw_mat_color[i] = input_text[i + strlen(CAST_TOKEN)];
+        temp_raw_mat_color[i] = input_text[i + SIZE_OF_RAW_MATERIAL_TOKEN];
     }
     temp_raw_material.color = text2color(temp_raw_mat_color);
 
+    char temp_raw_mat_identifier[piece_identifier_size + 1];  // Add 1 for null character
+
     for (int i = 0; i < piece_identifier_size; i++)
     {
-        temp_raw_mat_identifier[i] = input_text[SIZE_OF_COLOR_TEXT + SIZE_OF_CAST_TOKEN + i];
+        temp_raw_mat_identifier[i] = input_text[SIZE_OF_COLOR_TEXT + SIZE_OF_RAW_MATERIAL_TOKEN + i];
     }
+    temp_raw_mat_identifier[piece_identifier_size] = '\0';  // Add null character
     temp_raw_material.identifier = atoi(temp_raw_mat_identifier);
     
     return temp_raw_material;
