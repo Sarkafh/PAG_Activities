@@ -20,27 +20,19 @@
 void print_int(void * p_data)
 {
     int * value = (int *) p_data;
-    printf("%d\n", *value);
+    printf("Init Dado: %d\n", *value);
+}
+
+void print_int2(void * p_data)
+{
+    int * value = (int *) p_data;
+    printf("After Dado: %d\n", *value);
 }
 
 void free_int(void * p_data)
 {
     int * value = (int *) p_data;
     free(value);
-}
-
-int increasing_order(void * p_new_data, void * p_stored_data)
-{
-    int * new_value = (int *) p_new_data;
-    int * stored_value = (int *) p_stored_data;
-    return(*new_value < *stored_value); // todo checar o sinal
-}
-
-int decreasing_order(void * p_new_data, void * p_stored_data)
-{
-    int * new_value = (int *) p_new_data;
-    int * stored_value = (int *) p_stored_data;
-    return(*new_value > *stored_value); // todo checar o sinal
 }
 
 /** ****************************************************************************
@@ -52,33 +44,34 @@ int decreasing_order(void * p_new_data, void * p_stored_data)
 int main(int argc, char **argv)
 {
     p_linked_list_t my_linked_list;
-
-    char line[MAXIMUM_SIZE_OF_LINE];
-    char * p_new_line;
-    int new_data;
+    int value = 1;
 
     linked_list_create(&my_linked_list, sizeof(int), free_int);
 
-    while (fgets(line, MAXIMUM_SIZE_OF_LINE, stdin) != NULL)
+    for (int i = 0; i < 10; i++)
     {
-        p_new_line = strtok(line, DELIMITER_CHARACTER);
-        while ((p_new_line != NULL) && (strcmp(p_new_line, "\n") != 0))
-        {
-            p_new_line = strtok(NULL, DELIMITER_CHARACTER);
-            new_data = atoi(p_new_line);
-            linked_list_ordered_insert(my_linked_list, (void*) &new_data, increasing_order);
-        }
+        linked_list_insert(my_linked_list, &value, i);
+        value++;
+    }
+    value = 50;
+    linked_list_insert(my_linked_list, &value, 1);
+
+    for (int i = 0; i < 11; i++)
+    {
+        linked_list_print(my_linked_list, print_int, i);
     }
 
-    int i = 0;
-
-    while (!linked_list_print(my_linked_list, print_int, i))
+    for (int i = 5; i > 0; i--)
     {
-        i++;
+        linked_list_remove(my_linked_list, &value, i*2);
     }
-    
+
+    for (int i = 0; i < 11-5; i++)
+    {
+        linked_list_print(my_linked_list, print_int2, i);
+    }
+
     linked_list_destroy(&my_linked_list);
-
     return FINISHED_SUCCESS;
 }
 /*************** END OF FUNCTIONS ***************************************************************************/

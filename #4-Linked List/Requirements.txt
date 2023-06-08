@@ -1,0 +1,30 @@
+note: todas as funções retornam se a operação foi um sucesso ou não
+
+int Lcreate(pplist, ...);
+int Ldestroy(pplist, ...);
+int Linsert(plist, void, ...); // se fizer overloading?? não sei o que é isso ainda pelo jeito parece que é passar mais parâmetros do que a função está declarada inicialmente
+// ele vai colocar um código de overloading para nós vermos como é feito
+int Lremove(plist, void);
+int Lget(plist, ...); // retornar para aplicação o valor armazenado no índice em questão sem removê-lo
+int Lprint(plist, ...); // Nas bibliotecas não se deve incluir print - Esse print é um print genérico que recebe uma assinatura de um print que vai ser determinado pela aplicação
+
+// EXEMPLO:
+// int print_int(){
+// printf("%d", ...)}
+// int main()
+// ...
+// print_list(print_int());
+// print_list(print_char());
+
+
+struct node {
+    node * next;
+    node * previous; // se for duplamente encadeada
+    void * data;
+}
+
+struct descritor {
+    node * first; // equivalente ao next -> aponta para o primeiro node
+    node * last; // equivalente ao previous -> apontaria para o fim da lista se fosse duplamente encadeada
+    int type_size; // tamanho do tipo
+}

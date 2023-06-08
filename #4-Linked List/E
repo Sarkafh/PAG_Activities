@@ -1,0 +1,3 @@
+#!/bin/bash
+make clean &> /dev/null; make &> /dev/null
+./aplicacao

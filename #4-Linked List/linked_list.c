@@ -19,9 +19,9 @@
 *******************************************************************************/
 
 /** ****************************************************************************
-* Function : queue_create(pp_queue_t pp_queue, int type_size, int num_of_elements)
+* Function : linked_list_create(pp_linked_list_t pp_linked_list, int type_size, free_function_t p_free_function_temp)
 * @scope: Public
-* @description: Initilizes the generic queue
+* @description: Initilizes the generic linked list
 * @return 		LINKED_LIST_ERROR -> Finished execution with error
                 LINKED_LIST_SUCCESS -> Finished execution with success
 *******************************************************************************/
@@ -29,7 +29,7 @@ int linked_list_create(pp_linked_list_t pp_linked_list, int type_size, free_func
 {
     if (pp_linked_list == NULL)
     {
-        printf("Linked list pointer is invalid!\n");
+        // printf("Linked list pointer is invalid!\n");
         return LINKED_LIST_ERROR;
     }
 
@@ -37,7 +37,7 @@ int linked_list_create(pp_linked_list_t pp_linked_list, int type_size, free_func
 
     if ((*pp_linked_list) == NULL)
     {
-        printf("Could not allocate memory to store linked list!\n");
+        // printf("Could not allocate memory to store linked list!\n");
         return LINKED_LIST_ERROR;
     }
 
@@ -50,14 +50,20 @@ int linked_list_create(pp_linked_list_t pp_linked_list, int type_size, free_func
     return LINKED_LIST_SUCCESS;
 }
 
-// todo: document this
+/** ****************************************************************************
+* Function : create_node(ll_node_t ** pp_node_temp, void * p_data_temp, int type_size)
+* @scope: Private
+* @description: Creates a new node
+* @return 		LINKED_LIST_ERROR -> Finished execution with error
+                LINKED_LIST_SUCCESS -> Finished execution with success
+*******************************************************************************/
 int create_node(ll_node_t ** pp_node_temp, void * p_data_temp, int type_size)
 {
     *pp_node_temp = (ll_node_t*) malloc(sizeof(ll_node_t));
 
     if (*pp_node_temp == NULL)
     {
-        printf("Node pointer is invalid!\n");
+        // printf("Node pointer is invalid!\n");
         return LINKED_LIST_ERROR;
     }
 
@@ -65,7 +71,7 @@ int create_node(ll_node_t ** pp_node_temp, void * p_data_temp, int type_size)
 
     if (*pp_node_temp == NULL)
     {
-        printf("Could not allocate memory to data!\n");
+        // printf("Could not allocate memory to data!\n");
         free(*pp_node_temp);
         return LINKED_LIST_ERROR;
     }
@@ -77,12 +83,18 @@ int create_node(ll_node_t ** pp_node_temp, void * p_data_temp, int type_size)
     return LINKED_LIST_SUCCESS;
 }
 
-// todo: document this
+/** ****************************************************************************
+* Function : destroy_node(ll_node_t ** pp_node_temp, free_function_t p_free_function_temp)
+* @scope: Private
+* @description: Destroys the node and frees the allocated memory
+* @return 		LINKED_LIST_ERROR -> Finished execution with error
+                LINKED_LIST_SUCCESS -> Finished execution with success
+*******************************************************************************/
 int destroy_node(ll_node_t ** pp_node_temp, free_function_t p_free_function_temp)
 {
     if (*pp_node_temp == NULL)
     {
-        printf("Node pointer is invalid!\n");
+        // printf("Node pointer is invalid!\n");
         return LINKED_LIST_ERROR;
     }
 
@@ -99,7 +111,7 @@ int destroy_node(ll_node_t ** pp_node_temp, free_function_t p_free_function_temp
 /** ****************************************************************************
 * Function : linked_list_destroy(pp_linked_list_t pp_linked_list)
 * @scope: Public
-* @description: Frees the allocated memory
+* @description: Frees the allocated memory and allocated data
 * @return 		LINKED_LIST_ERROR -> Finished execution with error
                 LINKED_LIST_SUCCESS -> Finished execution with success
 *******************************************************************************/
@@ -110,7 +122,7 @@ int linked_list_destroy(pp_linked_list_t pp_linked_list)
     
     if ((*pp_linked_list == NULL) || (pp_linked_list == NULL))
     {
-        printf("Linked list pointer is invalid!\n");
+        // printf("Linked list pointer is invalid!\n");
         return LINKED_LIST_ERROR;
     }
 
@@ -133,9 +145,9 @@ int linked_list_destroy(pp_linked_list_t pp_linked_list)
 }
 
 /** ****************************************************************************
-* Function : queue_enqueue(p_queue_t p_queue, void * p_queue_data)
+* Function : linked_list_insert(p_linked_list_t p_linked_list, void * p_linked_list_data, int position_idx)
 * @scope: Public
-* @description: Add a new element in the queue
+* @description: Insert a new element to the list
 * @return 		LINKED_LIST_ERROR -> Finished execution with error
                 LINKED_LIST_SUCCESS -> Finished execution with success
 *******************************************************************************/
@@ -145,13 +157,13 @@ int linked_list_insert(p_linked_list_t p_linked_list, void * p_linked_list_data,
 
     if (p_linked_list == NULL)
     {
-        printf("Linked list pointer is invalid!\n");
+        // printf("Linked list pointer is invalid!\n");
         return LINKED_LIST_ERROR;
     }
 
     if (position_idx > p_linked_list->current_size)
     {
-        printf("Invalid insert index!\n");
+        // printf("Invalid insert index!\n");
         return LINKED_LIST_ERROR;
     }
 
@@ -197,9 +209,78 @@ int linked_list_insert(p_linked_list_t p_linked_list, void * p_linked_list_data,
 }
 
 /** ****************************************************************************
-* Function : queue_dequeue(p_queue_t p_queue, void * p_queue_data)
+* Function : linked_list_ordered_insert(p_linked_list_t p_linked_list, void * p_linked_list_data, int position_idx)
 * @scope: Public
-* @description: Deletes the queue top element
+* @description: Insert a new element to the list
+* @return 		LINKED_LIST_ERROR -> Finished execution with error
+                LINKED_LIST_SUCCESS -> Finished execution with success
+*******************************************************************************/
+int linked_list_ordered_insert(p_linked_list_t p_linked_list, void * p_linked_list_data, compare_function_t compare_function)
+{
+    ll_node_t * p_new_node;
+    ll_node_t * p_node_to_compare;
+    ll_node_t * p_previous_node;
+
+    if (p_linked_list == NULL)
+    {
+        // printf("Linked list pointer is invalid!\n");
+        return LINKED_LIST_ERROR;
+    }
+
+    if (position_idx > p_linked_list->current_size)
+    {
+        // printf("Invalid insert index!\n");
+        return LINKED_LIST_ERROR;
+    }
+
+    if(create_node(&p_new_node, p_linked_list_data, p_linked_list->type_size) == LINKED_LIST_ERROR)
+    {
+        return LINKED_LIST_ERROR;
+    }
+
+    if (p_linked_list->current_size == 0)
+    {
+        p_linked_list->descriptor.p_first_node = p_new_node;
+        p_linked_list->descriptor.p_last_node = p_new_node;
+        p_new_node->p_next_node = NULL;
+    }
+    else
+    {
+        p_node_to_compare = p_linked_list->descriptor.p_first_node;
+        p_previous_node = NULL;
+        while ((compare_function(p_new_node->p_data, p_node_to_compare->p_data) == 0) || (p_node_to_compare == NULL))
+        {
+            p_previous_node = p_node_to_compare;
+            p_node_to_compare = p_node_to_compare->p_next_node;
+        }
+
+        if (p_node_to_compare == p_linked_list->descriptor.p_first_node) // Add new data to first position
+        {
+            p_new_node->p_next_node = p_linked_list->descriptor.p_first_node;
+            p_linked_list->descriptor.p_first_node = p_new_node;
+        }
+        else if (p_node_to_compare == NULL) // Add new data to last position
+        {
+            p_linked_list->descriptor.p_last_node->p_next_node = p_new_node;
+            p_linked_list->descriptor.p_last_node = p_new_node;
+            p_new_node->p_next_node = NULL;
+        }
+        else
+        {
+            p_new_node->p_next_node = p_previous_node->p_next_node;
+            p_previous_node->p_next_node = p_new_node;
+        }
+    }
+    
+    p_linked_list->current_size++;
+
+    return LINKED_LIST_SUCCESS;
+}
+
+/** ****************************************************************************
+* Function : linked_list_remove(p_linked_list_t p_linked_list, void * p_linked_list_data, int position_idx)
+* @scope: Public
+* @description: Destroy the node on the selected index and returns it on p_linked_list_data
 * @return 		LINKED_LIST_ERROR -> Finished execution with error
                 LINKED_LIST_SUCCESS -> Finished execution with success
 *******************************************************************************/
@@ -209,13 +290,13 @@ int linked_list_remove(p_linked_list_t p_linked_list, void * p_linked_list_data,
 
     if (p_linked_list == NULL)
     {
-        printf("Linked list pointer is invalid!\n");
+        // printf("Linked list pointer is invalid!\n");
         return LINKED_LIST_ERROR;
     }
 
     if (p_linked_list->current_size == 0)
     {
-        printf("The linked list is empty!\n");
+        // printf("The linked list is empty!\n");
         return LINKED_LIST_ERROR;
     }
     
@@ -265,19 +346,26 @@ int linked_list_remove(p_linked_list_t p_linked_list, void * p_linked_list_data,
     return LINKED_LIST_SUCCESS;
 }
 
+/** ****************************************************************************
+* Function : linked_list_get(p_linked_list_t p_linked_list, void * p_linked_list_data, int position_idx)
+* @scope: Public
+* @description: Returns the data on the node and write on p_linked_list_data
+* @return 		LINKED_LIST_ERROR -> Finished execution with error
+                LINKED_LIST_SUCCESS -> Finished execution with success
+*******************************************************************************/
 int linked_list_get(p_linked_list_t p_linked_list, void * p_linked_list_data, int position_idx)
 {
     ll_node_t * p_node_to_output;
 
     if (p_linked_list == NULL)
     {
-        printf("Linked list pointer is invalid!\n");
+        // printf("Linked list pointer is invalid!\n");
         return LINKED_LIST_ERROR;
     }
 
     if ((p_linked_list->current_size == 0) || (position_idx > p_linked_list->current_size-1))
     {
-        printf("Invalid position index!\n");
+        // printf("Invalid position index!\n");
         return LINKED_LIST_ERROR;
     }
     
@@ -293,19 +381,26 @@ int linked_list_get(p_linked_list_t p_linked_list, void * p_linked_list_data, in
     return LINKED_LIST_SUCCESS;
 }
 
+/** ****************************************************************************
+* Function : linked_list_print(p_linked_list_t p_linked_list, print_function_t p_print_function, int position_idx)
+* @scope: Public
+* @description: Prints the selected node data with the given function
+* @return 		LINKED_LIST_ERROR -> Finished execution with error
+                LINKED_LIST_SUCCESS -> Finished execution with success
+*******************************************************************************/
 int linked_list_print(p_linked_list_t p_linked_list, print_function_t p_print_function, int position_idx)
 {
     ll_node_t * p_node_to_print;
 
     if (p_linked_list == NULL)
     {
-        printf("Linked list pointer is invalid!\n");
+        // printf("Linked list pointer is invalid!\n");
         return LINKED_LIST_ERROR;
     }
 
     if ((p_linked_list->current_size == 0) || (position_idx > p_linked_list->current_size-1))
     {
-        printf("Invalid position index!\n");
+        // printf("Invalid position index!\n");
         return LINKED_LIST_ERROR;
     }
 
